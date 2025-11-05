@@ -4,7 +4,7 @@ $$Y=A^\top\beta+f(X)+(A^\top\gamma+g(X))I(Z>\eta)+\epsilon,$$
 where: 
 1. $Y\in R$ represents the response,
 2. $A\in R^p$ means the covariate (treatment) with linear effects,
-3. $X\in R^r$ denotes other covariates that may have complex behavior,
+3. $X\in R^r$ denotes other covariates estimated by the DNN,
 4. $I(\cdot)$ means the indicator function, $f,g: R^r\to R$ are multivariate functions $(usually \ r\geq 3)$,
 5.  $Z\in R$ represents the change-point covariate.
 
