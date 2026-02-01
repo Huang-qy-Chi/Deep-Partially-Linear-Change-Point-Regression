@@ -1,42 +1,40 @@
 #%%
 import numpy as np
 import torch 
-from dnn_estimate import dnn_est
+from spl_estimate import spl_est
 from Theta_estimate import Theta_est
 from eta_estimate import eta_est
 
 #%%-------------------------Estimation by iteration-----------------------------
-def CPDPLM(train_data,val_data,test_data,Theta0, eta0,\
-            n_layer, n_node, n_lr, n_epoch, patiences,show_val=False,maxloop=100,seq=0.01):
-    Y_train = train_data['Y']
-    X_train = train_data['X']
-    A_train = train_data['A']
-    Z_train = train_data['Z']
+def CPALM(train_data,val_data,test_data,Theta0, eta0,m0, nodevec0 , maxloop=100, seq = 0.01):
     # index for whether it converges
     C_index = 0
+    
+    # Data combination 
+    train_val_data = {
+        key: np.concatenate([train_data[key], val_data[key]], axis=0)
+        for key in train_data
+    }
+
+    Z_train_val = train_val_data['Z']
+    X_train_val = train_val_data['X']
+    Y_train_val = train_val_data['Y']
+    A_train_val = train_val_data['A']
 
     # iterate estimation
     for i in range(maxloop):
-        # DNN estimation
-        dnn_res = dnn_est(train_data, val_data, test_data,Theta0,eta0,\
-                           n_layer, n_node, n_lr, n_epoch, patiences,show_val=show_val)
-        f_train = dnn_res['f_train']
-        g_train = dnn_res['g_train']
-        f_C_train = dnn_res['f_C_train']
-        f_val = dnn_res['f_val']
-        g_val = dnn_res['g_val']
-        f_C_val = dnn_res['f_C_val']
-        f_test = dnn_res['f_test']
-        g_test = dnn_res['g_test']
-        f_C_test = dnn_res['f_C_test']
-        val_loss = dnn_res['Val_loss']
-        maxepoch = dnn_res['Early_stop']
+        # B-spline estimation
+        spl_res = spl_est(train_data, val_data, test_data,Theta0,eta0,m0,nodevec0)
+        f_train_val = spl_res['f_train_val']
+        g_train_val = spl_res['g_train_val']
+        f_test = spl_res['f_test']
+        g_test = spl_res['g_test']
 
         # Parameter estimation
-        Theta = Theta_est(Y_train, A_train, Z_train, f_train, g_train, eta0)
+        Theta = Theta_est(Y_train_val, A_train_val, Z_train_val, f_train_val, g_train_val, eta0)
 
-        #Change point estimation
-        eta = eta_est(Y_train, A_train, Z_train, f_train, g_train, Theta, seq = seq)
+        # Change point estimation
+        eta = eta_est(Y_train_val, A_train_val, Z_train_val, f_train_val, g_train_val, Theta, seq = seq)
 
         # whether stop the loop
         if (np.max(abs(Theta0-Theta)) <= 0.01):
@@ -50,40 +48,24 @@ def CPDPLM(train_data,val_data,test_data,Theta0, eta0,\
         'Theta': Theta, 
         'eta': eta,
         'f_test': f_test,
-        'g_test': g_test,
-        'f_C_test': f_C_test,
-        'f_train': f_train,
-        'g_train': g_train,
-        'f_C_train': f_C_train,
-        'f_val': f_val,
-        'g_val': g_val,
-        'f_C_val': f_C_val,
-        'val_loss': val_loss,
-        'val_loss': val_loss,
-        'maxepoch': maxepoch
+        'g_test': g_test
     }
-
-
 
 if __name__ == '__main__':
     import numpy as np
     import numpy.random as ndm
-    import torch 
     import matplotlib.pyplot as plt
     from seed import set_seed
     from data_generator import generate_case_Deep
 
-
+    # True value
     corr = 0.5
     Theta = [-1,2]
     eta = 2
 
-    # hyperparameters
-    n_layer = 1
-    n_node = 64
-    n_epoch = 500
-    patiences = 30
-    n_lr = 2e-3
+    # Parameter
+    m0 = 2 
+    nodevec0 = np.array(np.linspace(0, 2, m0+2), dtype="float32")
 
     set_seed(3407)
     test_data = generate_case_Deep(500,corr,Theta,eta)
@@ -107,8 +89,7 @@ if __name__ == '__main__':
     eta0 = np.mean(train_data['Z'])  # initial eta
 
     # Estimation
-    res = CPDPLM(train_data,val_data,test_data,Theta0, eta0,\
-            n_layer, n_node, n_lr, n_epoch, patiences,show_val=False,maxloop=100,seq=0.01)
+    res = CPALM(train_data,val_data,test_data,Theta0, eta0, m0, nodevec0, maxloop=100,seq=0.01)
     
     # Result
     # record the results
@@ -122,61 +103,3 @@ if __name__ == '__main__':
     print('Theta: ', Theta_res)
     print('eta: ', eta_res)
     print('-------------------------------------------------')
-    
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
