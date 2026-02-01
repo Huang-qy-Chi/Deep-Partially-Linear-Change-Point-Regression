@@ -24,6 +24,8 @@ by seq (initial=0.01).
 
 The code recommends Python version>=3.13.2, Numpy >=2.2.4, Pytorch>=2.7.0 and Scipy>=1.15.2. 
 
+*Update in 01/02/2026: the main function for the simulation can be found in $\textsf{Main_deep.py}$, with multiprocess calculation.
+
 Copyright © 2025 Q. Huang. All rights reserved. 
 
 13/08/2025, Hung Hom, Kowloon, Hong Kong, China.
