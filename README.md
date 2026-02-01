@@ -25,8 +25,8 @@ by seq (initial=0.01).
 The code recommends Python version>=3.13.2, Numpy >=2.2.4, Pytorch>=2.7.0 and Scipy>=1.15.2. 
 
 *Update in 01/02/2026: the main function for the simulation can be found in $\textsf{Maindeep.py}$, with multiprocess calculation.
-Results are stored in AResult_index_n_{samplesize}_deep.npy, while the initial estimates are stored in ZCPDPLM_5_n_{samplesize}_deep.npy and
-ZCPLM_5_n_{samplesize}_deep.npy.
+Results are stored in AResult_index_n_samplesize_deep.npy, while the initial estimates are stored in ZCPDPLM_5_n_samplesize_deep.npy and
+ZCPLM_5_n_samplesize_deep.npy.
 
 Copyright © 2025 Q. Huang. All rights reserved. 
 
