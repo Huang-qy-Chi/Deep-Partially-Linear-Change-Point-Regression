@@ -42,7 +42,7 @@ if __name__ == "__main__":
                     n_layer[i], n_node[i], n_lr[i], n_epoch[i], patiences[i], \
                             n_layer_1[i], n_node_1[i], n_lr_1[i], n_epoch_1[i], patiences_1[i],\
                             n_layer_2[i], n_node_2[i], n_lr_2[i], n_epoch_2[i], patiences_2[i], \
-                                    maxloop, seq, m0, B, nj, save = False)    
+                                    maxloop, seq, m0, B, nj, save = True)    
         print(f"{"Complete"}_{"n"}_{n[i]}_{"case"}_{"Deep"}")
         print("System pause!")
         time.sleep(1)
@@ -50,6 +50,7 @@ if __name__ == "__main__":
 
 
     print('Mission accomplish!')
+
 
 
 
